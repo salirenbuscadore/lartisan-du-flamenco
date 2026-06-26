@@ -519,7 +519,7 @@
         <label for="mensaje">Cuéntanos tu proyecto</label>
         <textarea id="mensaje" placeholder="Dimensiones aproximadas, tipo de espacio, plazo..."></textarea>
       </div>
-      <button class="submit-btn" onclick="enviarFormulario()">Enviar solicitud</button>
+      <button class="submit-btn" id="submitBtn" onclick="enviarFormulario()">Enviar solicitud</button>
     </div>
     <div class="form-success" id="formSuccess">
       Merci — <em>nos ponemos en contacto contigo en breve.</em>
@@ -534,16 +534,45 @@
 </footer>
 
 <script>
-  function enviarFormulario() {
+  async async function enviarFormulario() {
     const nombre = document.getElementById('nombre').value.trim();
     const email = document.getElementById('email').value.trim();
+    const tipo = document.getElementById('tipo').value;
     const mensaje = document.getElementById('mensaje').value.trim();
     if (!nombre || !email || !mensaje) {
       alert('Por favor rellena al menos nombre, email y mensaje.');
       return;
     }
-    document.getElementById('contactForm').style.display = 'none';
-    document.getElementById('formSuccess').style.display = 'block';
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: 'ff1f7113-653f-4bb6-86a3-39b35395cac4',
+          name: nombre,
+          email: email,
+          subject: "L'Artisan du Flamenco – Nuevo contacto: " + (tipo || 'Consulta'),
+          message: mensaje,
+          tipo_proyecto: tipo
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('contactForm').style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        alert('Error al enviar. Inténtalo de nuevo.');
+        btn.textContent = 'Enviar solicitud';
+        btn.disabled = false;
+      }
+    } catch(e) {
+      alert('Error de conexión. Inténtalo de nuevo.');
+      btn.textContent = 'Enviar solicitud';
+      btn.disabled = false;
+    }
   }
 </script>
 
