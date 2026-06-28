@@ -554,9 +554,9 @@
           access_key: 'ff1f7113-653f-4bb6-86a3-39b35395cac4',
           name: nombre,
           email: email,
-          subject: "L'Artisan du Flamenco – Nuevo contacto: " + (tipo || 'Consulta'),
-          message: mensaje,
-          tipo_proyecto: tipo
+          subject: "Nuevo presupuesto – L'Artisan du Flamenco",
+          message: `Nombre: ${nombre}\nEmail: ${email}\nTipo de proyecto: ${tipo || 'No especificado'}\n\nMensaje:\n${mensaje}`,
+          from_name: "Web L'Artisan du Flamenco"
         })
       });
       const data = await res.json();
