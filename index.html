@@ -547,7 +547,10 @@
     btn.textContent = 'Enviando...';
     btn.disabled = true;
     try {
-      const res = await fetch('https://api.web3forms.com/submit', {
+      const userAgent = navigator.userAgent;
+
+      // Enviar a Web3Forms (email)
+      const resEmail = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -559,7 +562,22 @@
           from_name: "Web L'Artisan du Flamenco"
         })
       });
-      const data = await res.json();
+
+      // Enviar a Google Sheets
+      await fetch('https://script.google.com/macros/s/AKfycbxImjYfJlCZ0CMBNbHdEgCbqM5Int4dZ1uDoAzI9lnbyfrfjAtKtDBb8lZRIVSR0ZejyA/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: nombre,
+          email: email,
+          tipo_proyecto: tipo || '',
+          message: mensaje,
+          userAgent: userAgent
+        })
+      });
+
+      const data = await resEmail.json();
       if (data.success) {
         document.getElementById('contactForm').style.display = 'none';
         document.getElementById('formSuccess').style.display = 'block';
